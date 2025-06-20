@@ -3,9 +3,13 @@
 #include <ctime>
 using namespace std;
 
+// Enum for game choices
 enum enGameChoice { Stone = 1, Paper = 2, Scissors = 3 };
+
+// Enum for round winner
 enum enWinner { Player1 = 1, Computer = 2, Draw = 3 };
 
+// Struct to store details of a single round
 struct stRoundInfo {
     short RoundNumber = 0;
     enGameChoice Player1Choice;
@@ -14,6 +18,7 @@ struct stRoundInfo {
     string WinnerName;
 };
 
+// Struct to store the final game results
 struct stGameResults {
     short GameRounds = 0;
     short Player1WinTimes = 0;
@@ -23,14 +28,17 @@ struct stGameResults {
     string WinnerName = "";
 };
 
+// Generates a random number between From and To
 int RandomNumber(int From, int To) {
     return rand() % (To - From + 1) + From;
 }
 
+// Randomly selects a choice for the computer
 enGameChoice GetComputerChoice() {
     return (enGameChoice)RandomNumber(1, 3);
 }
 
+// Determines who won the round based on choices
 enWinner WhoWonTheRound(stRoundInfo RoundInfo) {
     if (RoundInfo.Player1Choice == RoundInfo.ComputerChoice)
         return enWinner::Draw;
@@ -45,22 +53,26 @@ enWinner WhoWonTheRound(stRoundInfo RoundInfo) {
     }
 }
 
+// Determines who won the full game
 enWinner WhoWonTheGame(short Player1WinTimes, short ComputerWinTimes) {
     if (Player1WinTimes > ComputerWinTimes) return enWinner::Player1;
     else if (ComputerWinTimes > Player1WinTimes) return enWinner::Computer;
     else return enWinner::Draw;
 }
 
+// Converts game choice enum to string
 string ChoiceName(enGameChoice Choice) {
     string arrGameChoices[3] = { "Stone", "Paper", "Scissors" };
     return arrGameChoices[Choice - 1];
 }
 
+// Converts winner enum to string
 string WinnerName(enWinner Winner) {
     string arrWinnerName[3] = { "Player1", "Computer", "No Winner (Draw)" };
     return arrWinnerName[Winner - 1];
 }
 
+// Reads the player's choice from input
 enGameChoice ReadPlayer1Choice() {
     short Choice;
     do {
@@ -70,6 +82,7 @@ enGameChoice ReadPlayer1Choice() {
     return (enGameChoice)Choice;
 }
 
+// Prints the result of a single round
 void PrintRoundResults(stRoundInfo RoundInfo) {
     cout << "\n____________ Round [" << RoundInfo.RoundNumber << "] ____________\n\n";
     cout << "Player1 Choice: " << ChoiceName(RoundInfo.Player1Choice) << endl;
@@ -78,6 +91,7 @@ void PrintRoundResults(stRoundInfo RoundInfo) {
     cout << "_________________________________________\n" << endl;
 }
 
+// Plays the game for a given number of rounds and returns final result
 stGameResults PlayGame(short HowManyRounds) {
     stRoundInfo RoundInfo;
     short Player1WinTimes = 0, ComputerWinTimes = 0, DrawTimes = 0;
@@ -90,6 +104,7 @@ stGameResults PlayGame(short HowManyRounds) {
         RoundInfo.Winner = WhoWonTheRound(RoundInfo);
         RoundInfo.WinnerName = WinnerName(RoundInfo.Winner);
 
+        // Update scores based on winner
         if (RoundInfo.Winner == enWinner::Player1)
             Player1WinTimes++;
         else if (RoundInfo.Winner == enWinner::Computer)
@@ -97,9 +112,11 @@ stGameResults PlayGame(short HowManyRounds) {
         else
             DrawTimes++;
 
+        // Show round results
         PrintRoundResults(RoundInfo);
     }
 
+    // Return final game results
     return {
         HowManyRounds,
         Player1WinTimes,
@@ -110,20 +127,24 @@ stGameResults PlayGame(short HowManyRounds) {
     };
 }
 
+// Starts the game and asks if the player wants to play again
 void StartGame() {
     char PlayAgain = 'Y';
 
     do {
-        system("cls");
-        stGameResults GameResults = PlayGame(3);
+        system("cls"); // Clear screen
+        stGameResults GameResults = PlayGame(3); // Play 3 rounds
         cout << "\nGame Over! Winner: " << GameResults.WinnerName << endl;
+
         cout << "\nDo you want to play again? (Y/N): ";
         cin >> PlayAgain;
+
     } while (PlayAgain == 'Y' || PlayAgain == 'y');
 }
 
+// Entry point of the program
 int main() {
-    srand((unsigned)time(NULL));
-    StartGame();
+    srand((unsigned)time(NULL));  // Seed random generator
+    StartGame();  // Start the game
     return 0;
 }
